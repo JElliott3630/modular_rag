@@ -1,0 +1,53 @@
+# ── Python bytecode ─────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.so
+*.pyd
+*.pyo
+*.pyd
+
+# ── Virtual-envs ───────────────────────────────────────────
+.venv/
+venv/
+env/
+
+# ── Environment & secrets ──────────────────────────────────
+.env
+*.env
+
+# ── Editor / IDE files ─────────────────────────────────────
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# ── OS / tooling clutter ───────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+*.bak
+
+# ── Build / dist / packaging ───────────────────────────────
+build/
+dist/
+*.egg-info/
+pip-wheel-metadata/
+
+# ── Logs & reports ─────────────────────────────────────────
+*.log
+*.coverage
+coverage.xml
+htmlcov/
+
+# ── Test artifacts ────────────────────────────────────────
+.cache/
+.pytest_cache/
+
+# ── Local data / vector stores ─────────────────────────────
+.chroma-local/
+*.sqlite3
+data/
+documents/
+
+# ── Notebooks & checkpoints ───────────────────────────────
+*.ipy*

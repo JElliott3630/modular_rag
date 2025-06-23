@@ -4,12 +4,13 @@ from typing import Sequence
 import json
 import logging
 import yaml
-import openai
+from openai import AsyncOpenAI
 from src import config
 
-openai.api_key = config.OPENAI_API_KEY
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+
+_client = AsyncOpenAI(api_key=config.OPENAI_API_KEY)
 
 
 class PromptExpansion:
@@ -21,19 +22,18 @@ class PromptExpansion:
     ) -> None:
         self._model = model or config.GPT_MODEL
         self._n = n
-        path = Path(prompts_path or config.PROMPTS_PATH).resolve()
-        prompts = yaml.safe_load(path.read_text())
-        exp_cfg = prompts["expansion"]
-        self._system = exp_cfg["system"]
-        self._template = exp_cfg["template"]
+        cfg = yaml.safe_load(Path(prompts_path or config.PROMPTS_PATH).read_text())["expansion"]
+        self._system = cfg["system"]
+        self._template = cfg["template"]
 
-    def run(self, query: str) -> Sequence[str]:
-        logger.info("expanding query")
-        user = self._template.format(query=query, n=self._n)
-        resp = openai.chat.completions.create(
+    async def run(self, query: str) -> Sequence[str]:
+        user_msg = self._template.format(query=query, n=self._n)
+        resp = await _client.chat.completions.create(
             model=self._model,
-            messages=[{"role": "system", "content": self._system}, {"role": "user", "content": user}],
+            messages=[
+                {"role": "system", "content": self._system},
+                {"role": "user", "content": user_msg},
+            ],
             temperature=0.7,
         )
-        content = resp.choices[0].message.content.strip()
-        return json.loads(content)
+        return json.loads(resp.choices[0].message.content)
